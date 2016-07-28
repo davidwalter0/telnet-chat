@@ -51,8 +51,8 @@ func (c Client) ReadLinesInto(ch chan<- string) {
 	}
 }
 
-func (c Client) WriteLinesFrom(ch <-chan string) {
-	for msg := range ch {
+func (c Client) WriteLinesFrom() {
+	for msg := range c.ch {
 		_, err := io.WriteString(c.conn, msg)
 		if err != nil {
 			return
@@ -92,7 +92,7 @@ func handleConnection(c net.Conn, msgchan chan<- string, addchan chan<- Client, 
 
 	// I/O
 	go client.ReadLinesInto(msgchan)
-	client.WriteLinesFrom(client.ch)
+	client.WriteLinesFrom()
 }
 
 func handleMessages(msgchan <-chan string, addchan <-chan Client, rmchan <-chan Client) {
